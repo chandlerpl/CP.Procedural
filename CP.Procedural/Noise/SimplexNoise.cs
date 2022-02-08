@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace CP.Procedural.Noise
 {
-
     public partial class SimplexNoise : NoiseGen
     {
         private static readonly int[] primeList = new[] { 1619, 31337, 6971, 1013 };

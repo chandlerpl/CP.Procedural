@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CP.Procedural", "CP.Procedu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CP.Procedural.Tests", "CP.Procedural.Tests\CP.Procedural.Tests.csproj", "{1A734635-5EAE-4CE7-843D-14E95993535D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CP.Procedural.VisualTest", "CP.Procedural.VisualTest\CP.Procedural.VisualTest.csproj", "{228B3D29-9F94-4DDE-9A02-4FE38950B104}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CP.Procedural.VisualTest", "CP.Procedural.VisualTest\CP.Procedural.VisualTest.csproj", "{228B3D29-9F94-4DDE-9A02-4FE38950B104}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
