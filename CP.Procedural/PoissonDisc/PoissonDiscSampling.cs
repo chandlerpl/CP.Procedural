@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CP.Procedural.Maths;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
@@ -8,7 +9,7 @@ namespace CP.Procedural.PoissonDisc
     public partial class PoissonDiscSampling
     {
         private static readonly float pi = 2 * (float)Math.PI;
-/*
+
         public static List<PoissonDisc> Sample2D(int seed, float minRadius, Vector3 regionSize, Vector3 centerPos, int k = 4, bool createNeighbours = false, Func<float, float, float> calcRadius = null)
         {
             List<PoissonDisc> points = new List<PoissonDisc>();
@@ -43,9 +44,11 @@ namespace CP.Procedural.PoissonDisc
 
                 Vector<float> theta = Vector.Multiply(new Vector<float>(randRot + 1.0f), Vector.Divide(J, K));
 
-                Vector<float> x = Vector.Add(new Vector<float>(spawnCentre.position.X), Vector.Multiply(r, ));
-                Vector<float> y = new Vector<float>(spawnCentre.position.Y);
+                Vector<float> x = Vector.Add(new Vector<float>(spawnCentre.position.X), Vector.Multiply(r, VectorTrig.Cos(theta)));
+                Vector<float> y = Vector.Add(new Vector<float>(spawnCentre.position.Y), Vector.Multiply(r, VectorTrig.Sin(theta)));
                 
+
+
                 for (int j = 0; j < k; j++)
                 {
                     float theta = pi * (randRot + 1.0f * j / k);
@@ -79,37 +82,41 @@ namespace CP.Procedural.PoissonDisc
             return points;
         }
 
-        private static bool IsValid2D(Vector3 candidate, double radius, int searchZone, Vector3 sampleRegionSize, double cellSize, int[,] grid, List<PoissonDisc> points)
+        private static bool IsValid2D(ref Vector<float> x, ref Vector<float> y, double radius, int searchZone, Vector3 sampleRegionSize, double cellSize, int[,] grid, List<PoissonDisc> points)
         {
-            if (candidate.X >= 0 && candidate.X < sampleRegionSize.X && candidate.Y >= 0 && candidate.Y < sampleRegionSize.Y)
-            {
-                int cellX = (int)(candidate.X / cellSize);
-                int cellY = (int)(candidate.Y / cellSize);
-                int searchStartX = Math.Max(0, cellX - searchZone);
-                int searchEndX = Math.Min(cellX + searchZone, grid.GetLength(0) - 1);
-                int searchStartY = Math.Max(0, cellY - searchZone);
-                int searchEndY = Math.Min(cellY + searchZone, grid.GetLength(1) - 1);
+            x = Vector.ConditionalSelect(Vector.LessThan(x, Vector<float>.Zero), Vector<float>.Zero, x);
+            x = Vector.ConditionalSelect(Vector.GreaterThanOrEqual(x, new Vector<float>(sampleRegionSize.X)), Vector<float>.Zero, x);
 
-                for (int x = searchStartX; x <= searchEndX; x++)
+            y = Vector.ConditionalSelect(Vector.LessThan(y, Vector<float>.Zero), Vector<float>.Zero, y);
+            y = Vector.ConditionalSelect(Vector.GreaterThanOrEqual(y, new Vector<float>(sampleRegionSize.Y)), Vector<float>.Zero, y);
+
+
+
+            int cellX = (int)(candidate.X / cellSize);
+            int cellY = (int)(candidate.Y / cellSize);
+            int searchStartX = Math.Max(0, cellX - searchZone);
+            int searchEndX = Math.Min(cellX + searchZone, grid.GetLength(0) - 1);
+            int searchStartY = Math.Max(0, cellY - searchZone);
+            int searchEndY = Math.Min(cellY + searchZone, grid.GetLength(1) - 1);
+
+            for (int x = searchStartX; x <= searchEndX; x++)
+            {
+                for (int y = searchStartY; y <= searchEndY; y++)
                 {
-                    for (int y = searchStartY; y <= searchEndY; y++)
+                    int pointIndex = grid[x, y] - 1;
+                    if (pointIndex != -1)
                     {
-                        int pointIndex = grid[x, y] - 1;
-                        if (pointIndex != -1)
+                        PoissonDisc disc = points[pointIndex];
+                        double sqrDst = (candidate - disc.position).SqrMagnitude;
+                        double r = disc.radius + radius;
+                        if (sqrDst < r * r)
                         {
-                            PoissonDisc disc = points[pointIndex];
-                            double sqrDst = (candidate - disc.position).SqrMagnitude;
-                            double r = disc.radius + radius;
-                            if (sqrDst < r * r)
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                 }
-                return true;
             }
-            return false;
+            return true;
         }
 
         private static List<PoissonDisc> CreateNeighbourList2D(List<PoissonDisc> points, int[,] grid, int searchZone)
@@ -154,5 +161,5 @@ namespace CP.Procedural.PoissonDisc
 
             return newPoints;
         }
-*/    }
+    }
 }
